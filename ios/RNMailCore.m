@@ -20,7 +20,12 @@ RCT_EXPORT_METHOD(loginSmtp:(NSDictionary *)obj resolver:(RCTPromiseResolveBlock
     MCOSMTPSession *smtpSession = [[MCOSMTPSession alloc] init];
     smtpSession.hostname = [RCTConvert NSString:obj[@"hostname"]];
     smtpSession.port = [RCTConvert int:obj[@"port"]];
+        int connectionType = [RCTConvert int:obj[@"connectionType"]];
+     if (connectionType == 1) {
     smtpSession.connectionType = MCOConnectionTypeTLS;
+    } else {
+    smtpSession.connectionType = MCOConnectionTypeStartTLS;
+    }
     
     int authType = [RCTConvert int:obj[@"authType"]];
     [smtpSession setAuthType:authType];
@@ -532,7 +537,7 @@ RCT_EXPORT_METHOD(getMails:(NSDictionary *)obj resolver:(RCTPromiseResolveBlock)
                     int flags = message.flags;
                     [mail setObject:[NSString stringWithFormat:@"%d",flags] forKey:@"flags"];
                     [mail setObject:message.header.from.displayName ? : @"" forKey:@"from"];
-                    [mail setObject:message.header.subject forKey:@"subject"];
+                    [mail setObject:message.header.subject ? : @"(No subject)" forKey:@"subject"];
                     [mail setObject:[dateFormat stringFromDate:message.header.date] forKey:@"date"];
                     if (message.attachments != nil) {
                         [mail setObject:[NSString stringWithFormat:@"%lu", message.attachments.count] forKey:@"attachments"];
@@ -753,7 +758,7 @@ RCT_EXPORT_METHOD(getMailsByRange:(NSDictionary *)obj resolver:(RCTPromiseResolv
             [mail setObject:[NSString stringWithFormat:@"%d",[message uid]] forKey:@"id"];
             [mail setObject:[NSString stringWithFormat:@"%d",(int)message.flags] forKey:@"flags"];
             [mail setObject:message.header.from.displayName ? : @"" forKey:@"from"];
-            [mail setObject:message.header.subject forKey:@"subject"];
+            [mail setObject:message.header.subject ? : @"(No subject)" forKey:@"subject"];
             [mail setObject:[dateFormat stringFromDate:message.header.date] forKey:@"date"];
             if (message.attachments != nil) {
                 [mail setObject:[NSString stringWithFormat:@"%lu", message.attachments.count] forKey:@"attachments"];

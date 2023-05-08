@@ -496,4 +496,3 @@ MailCore.getAttachmentInline({
 - [x] addFlags API support
 - [x] deleteFlags API support
 - [x] GetEmails API support
-- [x] Basic Example
